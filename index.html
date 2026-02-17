@@ -8,39 +8,56 @@
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap');
         body { font-family: 'Amiri', serif; background-color: #0b1a2a; color: white; text-align: center; margin: 0; padding: 20px; }
         .box { background: rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 15px; max-width: 450px; margin: auto; border: 1px solid #c9a55c; }
-        input { width: 85%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #c9a55c; font-size: 18px; text-align: center; background: white; color: black; }
+        input { width: 85%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #c9a55c; font-size: 18px; text-align: center; outline: none; }
         button { background: #c9a55c; color: #0b1a2a; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; width: 100%; }
-        canvas { width: 100%; border-radius: 10px; margin-top: 20px; display: none; }
-        .download { display: none; margin-top: 15px; color: #c9a55c; text-decoration: none; font-weight: bold; font-size: 18px; }
+        /* هذا الجزء يضمن ظهور الصورة كاملة وواضحة جداً */
+        canvas { width: 100%; height: auto; border-radius: 10px; margin-top: 20px; display: none; border: 1px solid #c9a55c; }
+        .download { display: none; margin-top: 15px; color: #c9a55c; text-decoration: none; font-weight: bold; border: 1px solid #c9a55c; padding: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
 <div class="box">
     <h2>🌙 اكتب اسمك للتهنئة</h2>
-    <input type="text" id="nameInput" placeholder="أدخل اسمك الكريم">
+    <input type="text" id="nameInput" placeholder="أدخل اسمك هنا">
     <br>
-    <button onclick="createImage()">عرض بطاقة التهنئة</button>
-    <canvas id="canvas" width="1000" height="1000"></canvas>
-    <a id="dl" class="download" download="ramadan.png">حفظ الصورة 📥</a>
+    <button onclick="createImage()">عرض بطاقة التهنئة ✨</button>
+    <canvas id="canvas"></canvas>
+    <a id="dl" class="download" download="ramadan_card.png">تحميل الصورة بجودة عالية 📥</a>
 </div>
+
 <script>
 function createImage() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const name = document.getElementById('nameInput').value;
     if(!name) { alert("من فضلك اكتب الاسم"); return; }
+
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.src = 'https://i.ibb.co/fzcZ0T2k/image.jpg'; 
+
     img.onload = function() {
-        ctx.drawImage(img, 0, 0, 1000, 1000);
+        // ضبط أبعاد اللوحة لتطابق جودة الصورة الأصلية بدقة
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // إعدادات الخط (ذهبي وفخم)
         ctx.fillStyle = "#e8c477"; 
-        ctx.font = "bold 65px Amiri";
+        ctx.font = "bold 60px Amiri"; 
         ctx.textAlign = "center";
-        ctx.fillText(name, 500, 880); 
+        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+        ctx.shadowBlur = 10;
+        
+        // وضع الاسم في مكان متناسق جداً في الأسفل
+        ctx.fillText(name, canvas.width / 2, canvas.height * 0.86); 
+
         canvas.style.display = "block";
-        document.getElementById('dl').href = canvas.toDataURL("image/png");
-        document.getElementById('dl').style.display = "block";
+        document.getElementById('dl').href = canvas.toDataURL("image/png", 1.0);
+        document.getElementById('dl').style.display = "inline-block";
+        
+        canvas.scrollIntoView({behavior: "smooth"});
     };
 }
 </script>
